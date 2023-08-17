@@ -1,80 +1,37 @@
 import {useRef, useState} from 'react'
-import {Canvas, useFrame} from '@react-three/fiber'
+import {useFrame, useLoader} from '@react-three/fiber'
 import {Select} from '@react-three/postprocessing'
-import {RenderTexture, OrbitControls, PerspectiveCamera, Text, ContactShadows} from '@react-three/drei'
+import {Euler, TextureLoader} from "three";
 
-//https://docs.pmnd.rs/react-three-fiber/getting-started/examples
+function Cube({colorMap, ...props}) {
+    const ref = useRef()
+    const [hovered, hover] = useState(null)
+    useFrame((state, delta) => (ref.current.rotation.x += delta))
 
-// function Cube() {
-//     const [hovered, hover] = useState(null)
-//     return (
-//         <Select enabled={hovered}>
-//         <mesh>
-//             <boxGeometry />
-//             <meshStandardMaterial>
-//                 <RenderTexture attach="map" anisotropy={16}>
-//                     <PerspectiveCamera makeDefault manual aspect={1 / 1} position={[0, 0, 5]} />
-//                     <color attach="background" args={['orange']} />
-//                     <ambientLight intensity={0.5} />
-//                     <directionalLight position={[10, 10, 5]} />
-//                     {/* eslint-disable-next-line react/jsx-no-undef */}
-//                     <Text font={'bebas'} fontSize={3} color="#555">
-//                         MA
-//                     </Text>
-//
-//                 </RenderTexture>
-//             </meshStandardMaterial>
-//         </mesh>
-//         </Select>
-//     )
-// }
+    return (
+        <Select enabled={hovered}>
+            <mesh
+                {...props}
+                ref={ref}
+                onPointerOver={() => hover(true)}
+                onPointerOut={() => hover(false)}>
+                <boxGeometry attach="geometry" args={[1, 1, 1]}/>
+                <meshStandardMaterial map={colorMap} attach="material" />
+            </mesh>
+        </Select>
+    )
+}
 
-function Cube(props) {
-
-        const ref = useRef()
-        const [hovered, hover] = useState(null)
-        console.log(hovered)
-
-        return (
-            <Select enabled={hovered}>
-
-                <mesh ref={ref} {...props} onPointerOver={() => hover(true)} onPointerOut={() => hover(false)}>
-                    <boxGeometry />
-
-                    <meshStandardMaterial color='#f0f'>
-
-                                     <RenderTexture attach="map" anisotropy={16}>
-                                         <PerspectiveCamera makeDefault manual aspect={1 / 1} position={[0, 0, 5]} />
-
-                                         <ambientLight intensity={17} />
-                                         <directionalLight position={[10, 10, 5]} />
-                                         <Text font={'bebas'} fontSize={3}>
-                                             MA
-                                         </Text>
-                                     </RenderTexture>
-                    </meshStandardMaterial>
-
-                </mesh>
-            </Select>
-        )
-    }
-        // <Select enabled={hovered}>
-        //     <mesh ref={ref} {...props} onPointerOver={() => hover(true)} onPointerOut={() => hover(false)}>
-        //         <boxGeometry/>
-        //         <meshStandardMaterial >
-        //             <RenderTexture attach="map" anisotropy={16}>
-        //                 <PerspectiveCamera makeDefault manual aspect={1 / 1} position={[0, 0, 5]} />
-        //
-        //                 <ambientLight intensity={0.5} />
-        //                 <directionalLight position={[10, 10, 5]} />
-        //                 <Text font={'bebas'} fontSize={3} color="#fff">
-        //                     MA
-        //                 </Text>
-        //             </RenderTexture>
-        //         </meshStandardMaterial>
-        //     </mesh>
-        // </Select>
-
-
+// const [[a, b, c, d, e]] = useState(() => [...Array(5)].map(createRef))
+// return (
+//     <Canvas orthographic camera={{ zoom: 80 }}>
+//         <Nodes>
+//             <Node ref={a} name="a" color="#204090" position={[-2, 2, 0]} connectedTo={[b, c, e]} />
+//             <Node ref={b} name="b" color="#904020" position={[2, -3, 0]} connectedTo={[d, a]} />
+//             <Node ref={c} name="c" color="#209040" position={[-0.25, 0, 0]} />
+//             <Node ref={d} name="d" color="#204090" position={[0.5, -0.75, 0]} />
+//             <Node ref={e} name="e" color="#204090" position={[-0.5, -1, 0]} />
+//         </Nodes>
+//     </Canvas>
 
 export default Cube
