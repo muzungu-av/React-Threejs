@@ -1,9 +1,9 @@
-import React, {Suspense} from 'react';
+import React, {Suspense, useRef, useState} from 'react';
 import './App.css';
-import {Canvas} from '@react-three/fiber'
+import {Canvas, useFrame} from '@react-three/fiber'
 import {OrbitControls, useTexture} from "@react-three/drei";
 
-const Cube: React.FC = () => {
+const Cube: React.FC = ({speed_x, speed_y, ...props}) => {
     const envMap = useTexture({
         map_0: '0.png',
         map_1: '1.png',
@@ -12,7 +12,18 @@ const Cube: React.FC = () => {
         map_4: '4.png',
         map_5: '5.png',
     })
-    return (<mesh>
+    const ref = useRef()
+    const [hovered, hover] = useState(null)
+    useFrame((state, delta) => {
+        ref.current.rotation.y += delta/speed_x;
+        ref.current.rotation.x += delta/speed_y
+    })
+
+    return (<mesh  {...props}
+                   ref={ref}
+                   onPointerOver={() => hover(true)}
+                   onPointerOut={() => hover(false)}>
+
         <boxGeometry attach="geometry" args={[1, 1, 1]}/>
         <meshStandardMaterial metalness={0.9} roughness={0.1} attach={`material-0`} map={envMap.map_0}/>
         <meshStandardMaterial metalness={0.9} roughness={0.1} attach={`material-1`} map={envMap.map_1}/>
@@ -35,11 +46,14 @@ export default function App() {
             }}
             pixelRatio={Math.min(window.devicePixelRatio, 2)}>
             <color attach="background" args={[0.2, 0.2, 0.2]}/>
-            <OrbitControls/>
             <ambientLight args={[0xffffff, 25]}/>
-            <Suspense fallback={null}>
-                <Cube/>
-            </Suspense>
+
+            <Cube position={[0, 0, -4]} speed_x={1.5} speed_y={1.3}/>
+            <Cube position={[-3, -1, -1]} speed_x={2.1} speed_y={3.4}/>
+            <Cube position={[-1, -2, 0]} speed_x={1.8} speed_y={1}/>
+            <Cube position={[-4, -3, -5]} speed_x={0.9} speed_y={0.7}/>
+            <Cube position={[-6, -5, -3]} speed_x={1.2} speed_y={3}/>
+            <Cube position={[1, -2, -4]} speed_x={2.7} speed_y={1.8}/>
         </Canvas>
     );
 }
