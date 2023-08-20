@@ -53,11 +53,11 @@ export default function App() {
                 far: 100
             }}
             pixelRatio={Math.min(window.devicePixelRatio, 2)}>
-            <color attach="background" args={[0.2, 0.2, 0.2]}/>
+            <color attach="background" args={[0.05, 0.05, 0.05]}/>
             <ambientLight args={[0xffffff, 25]}/>
             <Selection>
                 <EffectComposer multisampling={8} autoClear={false}>
-                    <Outline blur visibleEdgeColor="white" edgeStrength={100} width={1000}/>
+                    <Outline blur visibleEdgeColor="blue" edgeStrength={100} width={1000}/>
                 </EffectComposer>
                 <Cube position={[0, 0, -4]} speed_x={1.5} speed_y={1.3}/>
                 <Cube position={[-3, -1, -1]} speed_x={2.1} speed_y={3.4}/>
