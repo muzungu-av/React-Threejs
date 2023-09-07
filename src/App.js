@@ -3,6 +3,7 @@ import './App.css';
 import {Canvas, useFrame} from '@react-three/fiber'
 import {useTexture} from "@react-three/drei";
 import {Selection, EffectComposer, Outline, Select} from "@react-three/postprocessing";
+import {Physics, useBox, usePlane} from "@react-three/cannon";
 
 const Cube: React.FC = ({speed_x, speed_y, ...props}) => {
 
@@ -15,14 +16,14 @@ const Cube: React.FC = ({speed_x, speed_y, ...props}) => {
         map_5: '5.png',
     })
 
-    const ref = useRef()
+    const [ref] = useBox(() => ({mass: 1, position: [100, 10, 10], rotation: [0.4, 0.2, 0.5], ...props}))
 
     const [hovered, hover] = useState(null)
 
-    useFrame((state, delta) => {
-        ref.current.rotation.y += delta / speed_x;
-        ref.current.rotation.x += delta / speed_y
-    })
+    // useFrame((state, delta) => {
+    //     ref.current.rotation.y += delta / speed_x;
+    //     ref.current.rotation.x += delta / speed_y;
+    // })
 
     return (
         <Select enabled={hovered}>
@@ -43,13 +44,23 @@ const Cube: React.FC = ({speed_x, speed_y, ...props}) => {
     );
 };
 
+const Plane: React.FC = (props) => {
+    const [ref] = usePlane(() => ({rotation: [-Math.PI / 2, 0, 0], ...props}))
+    return (
+        <mesh ref={ref} receiveShadow>
+            <planeGeometry args={[20, 25]}/>
+            <meshStandardMaterial color={[0.01, 0.01, 0.02]}/>
+        </mesh>
+    )
+}
+
 export default function App() {
     return (
         <Canvas
             camera={{
-                position: [1, 1, 2],
-                fov: 75,
-                near: 0.1,
+                position: [5, 3, -4],
+                fov: 100,
+                near: 0.2,
                 far: 100
             }}
             pixelRatio={Math.min(window.devicePixelRatio, 2)}>
@@ -59,12 +70,16 @@ export default function App() {
                 <EffectComposer multisampling={8} autoClear={false}>
                     <Outline blur visibleEdgeColor="blue" edgeStrength={100} width={1000}/>
                 </EffectComposer>
-                <Cube position={[0, 0, -4]} speed_x={1.5} speed_y={1.3}/>
-                <Cube position={[-3, -1, -1]} speed_x={2.1} speed_y={3.4}/>
-                <Cube position={[-1, -2, 0]} speed_x={1.8} speed_y={1}/>
-                <Cube position={[-4, -3, -5]} speed_x={0.9} speed_y={0.7}/>
-                <Cube position={[-6, -5, -3]} speed_x={1.2} speed_y={3}/>
-                <Cube position={[1, -2, -4]} speed_x={2.7} speed_y={1.8}/>
+                <directionalLight position={[10, 10, 10]} castShadow shadow-mapSize={[2048, 2048]}/>
+                <Physics gravity={[0, -0.9, 0]} allowSleep={false}>
+                    <Cube position={[0, 7, 1]}/>
+                    <Cube position={[2.2, 6, 1.7]} />
+                    <Cube position={[-1.7, 5, 1.7]} />
+                    <Cube position={[2.3, 5, 0.1]} />
+                    <Cube position={[-1, 4.5, -1]} />
+                    <Cube position={[1, 3, -1.45]} />
+                    <Plane position={[0, -2.5, 0]}/>
+                </Physics>
             </Selection>
         </Canvas>
     );
